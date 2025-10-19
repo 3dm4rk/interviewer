@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Question Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .question-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-category {
+            font-size: 0.9rem;
+            color: #6a11cb;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .next-btn {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+        }
+        
+        .reset-btn {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .reset-btn:hover {
+            background-color: #dee2e6;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #6a11cb;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .question-lists {
+            margin-top: 30px;
+        }
+        
+        .list-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        
+        .question-list {
+            list-style-type: none;
+            margin-bottom: 25px;
+        }
+        
+        .question-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #2575fc;
+            transition: all 0.2s ease;
+        }
+        
+        .question-list li.used {
+            opacity: 0.6;
+            border-left-color: #6c757d;
+            text-decoration: line-through;
+        }
+        
+        .question-list li:hover {
+            background-color: #e9ecef;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interview Question Generator</h1>
+            <p class="subtitle">Practice with common interview questions and out-of-the-blue questions</p>
+        </header>
+        
+        <div class="content">
+            <div class="question-section">
+                <div class="question-category" id="question-category">Click "Next Question" to start</div>
+                <div class="question-text" id="question-text">Welcome! This tool will help you prepare for your interview by presenting random questions from common and out-of-the-blue categories.</div>
+            </div>
+            
+            <div class="controls">
+                <button class="next-btn" id="next-btn">Next Question</button>
+                <button class="reset-btn" id="reset-btn">Reset Questions</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="common-used">0</div>
+                    <div class="stat-label">Common Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="common-remaining">10</div>
+                    <div class="stat-label">Common Remaining</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="blue-used">0</div>
+                    <div class="stat-label">Out-of-Blue Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="blue-remaining">4</div>
+                    <div class="stat-label">Out-of-Blue Remaining</div>
+                </div>
+            </div>
+            
+            <div class="question-lists">
+                <h3 class="list-title">Common Questions</h3>
+                <ul class="question-list" id="common-list">
+                    <!-- Common questions will be populated by JavaScript -->
+                </ul>
+                
+                <h3 class="list-title">Out-of-the-Blue Questions</h3>
+                <ul class="question-list" id="blue-list">
+                    <!-- Out-of-the-blue questions will be populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Practice makes perfect! Good luck with your interview preparation.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Question data
+        const commonQuestions = [
+            "Tell me about yourself?",
+            "How do you see yourself 5 years from now?",
+            "What is your highest educational attainment?",
+            "Can you work under pressure?",
+            "Why VXI?",
+            "What is BPO?",
+            "Why should we hire you?",
+            "Why should not we hire you?",
+            "What is your idea about customer service?",
+            "What is your edge among the other applicants?",
+            "What is your salary expectation?",
+            "How would you handle an irate customer?"
+        ];
+        
+        const blueQuestions = [
+            "How do you explain a color rainbow to a blind person?",
+            "What is your favorite movie and why?",
+            "What is your favorite music?",
+            "How would you explain specific color to a blind person?"
+        ];
+        
+        // Initialize used questions arrays
+        let usedCommonQuestions = [];
+        let usedBlueQuestions = [];
+        
+        // DOM elements
+        const questionCategoryElement = document.getElementById('question-category');
+        const questionTextElement = document.getElementById('question-text');
+        const nextButton = document.getElementById('next-btn');
+        const resetButton = document.getElementById('reset-btn');
+        const commonListElement = document.getElementById('common-list');
+        const blueListElement = document.getElementById('blue-list');
+        const commonUsedElement = document.getElementById('common-used');
+        const commonRemainingElement = document.getElementById('common-remaining');
+        const blueUsedElement = document.getElementById('blue-used');
+        const blueRemainingElement = document.getElementById('blue-remaining');
+        
+        // Initialize question lists in the UI
+        function initializeQuestionLists() {
+            // Clear existing lists
+            commonListElement.innerHTML = '';
+            blueListElement.innerHTML = '';
+            
+            // Populate common questions list
+            commonQuestions.forEach((question, index) => {
+                const li = document.createElement('li');
+                li.textContent = question;
+                li.dataset.index = index;
+                if (usedCommonQuestions.includes(index)) {
+                    li.classList.add('used');
+                }
+                commonListElement.appendChild(li);
+            });
+            
+            // Populate blue questions list
+            blueQuestions.forEach((question, index) => {
+                const li = document.createElement('li');
+                li.textContent = question;
+                li.dataset.index = index;
+                if (usedBlueQuestions.includes(index)) {
+                    li.classList.add('used');
+                }
+                blueListElement.appendChild(li);
+            });
+            
+            // Update stats
+            updateStats();
+        }
+        
+        // Update the statistics display
+        function updateStats() {
+            commonUsedElement.textContent = usedCommonQuestions.length;
+            commonRemainingElement.textContent = commonQuestions.length - usedCommonQuestions.length;
+            blueUsedElement.textContent = usedBlueQuestions.length;
+            blueRemainingElement.textContent = blueQuestions.length - usedBlueQuestions.length;
+        }
+        
+        // Get a random question from the specified category
+        function getRandomQuestion(category) {
+            let questions, usedQuestions, categoryName;
+            
+            if (category === 'common') {
+                questions = commonQuestions;
+                usedQuestions = usedCommonQuestions;
+                categoryName = 'Common Question';
+            } else {
+                questions = blueQuestions;
+                usedQuestions = usedBlueQuestions;
+                categoryName = 'Out-of-the-Blue Question';
+            }
+            
+            // If all questions have been used, reset the used list
+            if (usedQuestions.length === questions.length) {
+                usedQuestions.length = 0;
+            }
+            
+            // Find an unused question
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * questions.length);
+            } while (usedQuestions.includes(randomIndex));
+            
+            // Mark the question as used
+            usedQuestions.push(randomIndex);
+            
+            // Update the UI
+            questionCategoryElement.textContent = categoryName;
+            questionTextElement.textContent = questions[randomIndex];
+            
+            // Update the question lists to show which questions have been used
+            initializeQuestionLists();
+            
+            return { category, index: randomIndex, text: questions[randomIndex] };
+        }
+        
+        // Get a random question from either category
+        function getRandomQuestionFromEither() {
+            // Decide which category to use based on remaining questions
+            const commonRemaining = commonQuestions.length - usedCommonQuestions.length;
+            const blueRemaining = blueQuestions.length - usedBlueQuestions.length;
+            
+            // If one category is exhausted, use the other
+            if (commonRemaining === 0) {
+                return getRandomQuestion('blue');
+            } else if (blueRemaining === 0) {
+                return getRandomQuestion('common');
+            }
+            
+            // Otherwise, randomly choose a category
+            const randomCategory = Math.random() < 0.7 ? 'common' : 'blue';
+            return getRandomQuestion(randomCategory);
+        }
+        
+        // Reset all used questions
+        function resetQuestions() {
+            usedCommonQuestions = [];
+            usedBlueQuestions = [];
+            questionCategoryElement.textContent = 'Click "Next Question" to start';
+            questionTextElement.textContent = 'Welcome! This tool will help you prepare for your interview by presenting random questions from common and out-of-the-blue categories.';
+            initializeQuestionLists();
+        }
+        
+        // Event listeners
+        nextButton.addEventListener('click', getRandomQuestionFromEither);
+        resetButton.addEventListener('click', resetQuestions);
+        
+        // Initialize the application
+        initializeQuestionLists();
+    </script>
+</body>
+</html>
